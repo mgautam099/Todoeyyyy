@@ -14,12 +14,12 @@ class ToDoListViewController: UITableViewController {
     let KEY_TO_DO_LIST = "ToDOList"
     
     var userDefaults = UserDefaults.standard
-    var itemArray = ["Save Kenny", "Find Satan", "Buy XBox 360", "Fight Barbera Striesand"]
+    var itemArray = [Item]()
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if let items = userDefaults.array(forKey: KEY_TO_DO_LIST) as? [String] {
+        if let items = userDefaults.array(forKey: KEY_TO_DO_LIST) as? [Item] {
             itemArray = items
         }
         // Do any additional setup after loading the view, typically from a nib.
@@ -33,18 +33,16 @@ class ToDoListViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: ID_TO_DO_ITEM_CELL, for: indexPath)
-        cell.textLabel?.text = itemArray[indexPath.row]
+        cell.textLabel?.text = itemArray[indexPath.row].title
+        cell.accessoryType = itemArray[indexPath.row].isComplete ? .checkmark:.none
         return cell
     }
     
     //MARK - TableView Delegate Methods
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath)
-        if cell?.accessoryType == .checkmark {
-            cell?.accessoryType = .none
-        } else {
-            cell?.accessoryType = .checkmark
-        }
+        itemArray[indexPath.row].isComplete = !itemArray[indexPath.row].isComplete
+        cell.accessoryType = itemArray[indexPath.row].isComplete ? .checkmark:.none
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
@@ -57,7 +55,7 @@ class ToDoListViewController: UITableViewController {
         
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
             // Mark what will happen
-            self.itemArray.append(textField.text!)
+            self.itemArray.append(Item(textField.text!))
             self.tableView.reloadData()
             self.userDefaults.set(self.itemArray, forKey: self.KEY_TO_DO_LIST)
         }
