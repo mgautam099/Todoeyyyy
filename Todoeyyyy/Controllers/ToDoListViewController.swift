@@ -11,8 +11,8 @@ import CoreData
 
 class ToDoListViewController: UITableViewController {
 
+    @IBOutlet weak var searchBar: UISearchBar!
     let ID_TO_DO_ITEM_CELL = "toDoItemCell"
-    let KEY_TO_DO_LIST = "ToDOList"
     
     var itemArray = [Item]()
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
@@ -21,6 +21,7 @@ class ToDoListViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         loadData()
+        searchBar.delegate = self
     }
 
     //MARK - TableView Datasource Methods
@@ -67,7 +68,6 @@ class ToDoListViewController: UITableViewController {
     }
     
     func saveData() {
-        
         do {
             try context.save()
         } catch {
@@ -88,15 +88,29 @@ class ToDoListViewController: UITableViewController {
 
 //MARK - Search bar methods
 extension ToDoListViewController: UISearchBarDelegate {
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+    
+    func search(with text: String){
         let request : NSFetchRequest<Item> = Item.fetchRequest()
-        request.predicate = NSPredicate(format: "title CONTAINS %@", searchBar.text!)
+        request.predicate = NSPredicate(format: "title CONTAINS %@", text)
         request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
         loadData(with: request)
     }
+//
+//    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+//        search(with: searchBar.text!)
+//    }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        
+        if searchBar.text?.count == 0{
+            loadData()
+        } else{
+            search(with: searchBar.text!)
+        }
     }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        print("Cancel Button")
+    }
+    
 }
 
