@@ -17,11 +17,13 @@ class ToDoListViewController: UITableViewController {
     var itemArray = [Item]()
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
+    var selectedCategory: Category?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         loadData()
         searchBar.delegate = self
+        navigationItem.title = selectedCategory?.title
     }
 
     //MARK - TableView Datasource Methods
@@ -41,6 +43,7 @@ class ToDoListViewController: UITableViewController {
         let cell = tableView.cellForRow(at: indexPath)
         itemArray[indexPath.row].done = !itemArray[indexPath.row].done
         cell?.accessoryType = itemArray[indexPath.row].done ? .checkmark:.none
+        itemArray[indexPath.row].parentCategory = self.selectedCategory
         tableView.deselectRow(at: indexPath, animated: true)
         saveData()
     }
@@ -56,6 +59,7 @@ class ToDoListViewController: UITableViewController {
             // Mark what will happen
             let item = Item(context: self.context)
             item.title = textField.text!
+            item.parentCategory = self.selectedCategory
             self.itemArray.append(item)
             self.saveData()
         }
@@ -77,11 +81,7 @@ class ToDoListViewController: UITableViewController {
     }
     
     func loadData(with request: NSFetchRequest<Item> = Item.fetchRequest()){
-        do {
-            itemArray = try context.fetch(request)
-        } catch {
-            print("Error fetching items \(error)")
-        }
+        itemArray = selectedCategory?.items?.allObjects as! [Item]
         tableView.reloadData()
     }
 }
@@ -90,10 +90,12 @@ class ToDoListViewController: UITableViewController {
 extension ToDoListViewController: UISearchBarDelegate {
     
     func search(with text: String){
-        let request : NSFetchRequest<Item> = Item.fetchRequest()
-        request.predicate = NSPredicate(format: "title CONTAINS %@", text)
-        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
-        loadData(with: request)
+        itemArray = itemArray.filter {$0.title?.contains(text) ?? false}
+        tableView.reloadData()
+//        let request : NSFetchRequest<Item> = Item.fetchRequest()
+//        request.predicate = NSPredicate(format: "title CONTAINS %@", text)
+//        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+//        loadData(with: request)
     }
 //
 //    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
