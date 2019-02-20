@@ -18,7 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         do {
-            let realm = try Realm()
+            let _ = try Realm()
         } catch {
             print("Error in initializing realm \(error)")
         }        

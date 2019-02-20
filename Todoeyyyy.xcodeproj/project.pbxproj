@@ -18,6 +18,7 @@
 		DB41E18D2219A72400C768DF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DB41E18B2219A72400C768DF /* LaunchScreen.storyboard */; };
 		DB41E1982219ACED00C768DF /* ToDoItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB41E1962219ACED00C768DF /* ToDoItemCell.swift */; };
 		DB41E1992219ACED00C768DF /* ToDoItemCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB41E1972219ACED00C768DF /* ToDoItemCell.xib */; };
+		DB573E7A221DABA8006B11F0 /* SwipeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB573E79221DABA8006B11F0 /* SwipeTableViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +37,7 @@
 		DB41E18E2219A72400C768DF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DB41E1962219ACED00C768DF /* ToDoItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoItemCell.swift; sourceTree = "<group>"; };
 		DB41E1972219ACED00C768DF /* ToDoItemCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ToDoItemCell.xib; sourceTree = "<group>"; };
+		DB573E79221DABA8006B11F0 /* SwipeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +105,7 @@
 			children = (
 				DB41E1842219A72200C768DF /* ToDoListViewController.swift */,
 				A802CB21221BCC7B00F21B4A /* CategoryListViewController.swift */,
+				DB573E79221DABA8006B11F0 /* SwipeTableViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -214,15 +217,19 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Todoeyyyy/Pods-Todoeyyyy-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/ChameleonFramework/ChameleonFramework.framework",
 				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
 				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/SwipeCellKit/SwipeCellKit.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ChameleonFramework.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwipeCellKit.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -261,6 +268,7 @@
 				A802CB22221BCC7B00F21B4A /* CategoryListViewController.swift in Sources */,
 				DB41E1982219ACED00C768DF /* ToDoItemCell.swift in Sources */,
 				DB41E1852219A72200C768DF /* ToDoListViewController.swift in Sources */,
+				DB573E7A221DABA8006B11F0 /* SwipeTableViewController.swift in Sources */,
 				A8F6519C221C0F6600CDDBB5 /* Item.swift in Sources */,
 				DB41E1832219A72200C768DF /* AppDelegate.swift in Sources */,
 				A8F6519E221C0F7100CDDBB5 /* Category.swift in Sources */,
@@ -413,6 +421,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = ZZN46ZQEPH;
 				INFOPLIST_FILE = Todoeyyyy/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -420,7 +429,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.mayankgautam.Todoeyyyy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -432,6 +441,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = ZZN46ZQEPH;
 				INFOPLIST_FILE = Todoeyyyy/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -439,7 +449,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.mayankgautam.Todoeyyyy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

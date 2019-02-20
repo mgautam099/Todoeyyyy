@@ -8,8 +8,9 @@
 
 import UIKit
 import RealmSwift
+import ChameleonFramework
 
-class ToDoListViewController: UITableViewController {
+class ToDoListViewController: SwipeTableViewController {
 
     @IBOutlet weak var searchBar: UISearchBar!
     let ID_TO_DO_ITEM_CELL = "toDoItemCell"
@@ -26,7 +27,19 @@ class ToDoListViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         searchBar.delegate = self
-        navigationItem.title = selectedCategory?.title
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        title = selectedCategory?.title
+        guard let color = selectedCategory?.color else { fatalError() }
+        super.updateNavBar(withHexColor: color)
+        searchBar.barTintColor = UIColor(hexString: color)
+        searchBar.backgroundColor = UIColor(hexString: color)
+        searchBar.backgroundImage = UIImage()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.updateNavBar(withHexColor: "7A81FF")
     }
 
     //MARK - TableView Datasource Methods
@@ -35,10 +48,17 @@ class ToDoListViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: ID_TO_DO_ITEM_CELL, for: indexPath)
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         if let item = items?[indexPath.row] {
             cell.textLabel?.text = item.title
             cell.accessoryType = item.done ? .checkmark:.none
+            
+            if let color = UIColor.init(hexString: selectedCategory!.color)?.darken(byPercentage: CGFloat(indexPath.row)/CGFloat(items!.count)) {
+                cell.tintColor = ContrastColorOf(color, returnFlat: true)
+                cell.backgroundColor = color
+                cell.textLabel?.textColor = ContrastColorOf(color, returnFlat: true)
+            }
+            
         }
         return cell
     }
@@ -90,38 +110,42 @@ class ToDoListViewController: UITableViewController {
     }
     
     func loadData(){
-        items = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
+        items = selectedCategory?.items.sorted(byKeyPath: "dateCreated", ascending: true)
         tableView.reloadData()
+    }
+    
+    override func updateModel(at indexPath: IndexPath) {
+        if let item = items?[indexPath.row] {
+            do {
+                try self.realm.write {
+                    realm.delete(item)
+                }
+            } catch {
+                print("Error deleting item: \(error)")
+            }
+        }
     }
 }
 
 //MARK - Search bar methods
 extension ToDoListViewController: UISearchBarDelegate {
     
-//    func search(with text: String){
-//        items = items.filter {$0.title?.contains(text) ?? false}
-//        tableView.reloadData()
-////        let request : NSFetchRequest<Item> = Item.fetchRequest()
-////        request.predicate = NSPredicate(format: "title CONTAINS %@", text)
-////        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
-////        loadData(with: request)
-//    }
-////
-////    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-////        search(with: searchBar.text!)
-////    }
-//
-//    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-//        if searchBar.text?.count == 0{
-//            loadData()
-//        } else{
-//            search(with: searchBar.text!)
-//        }
-//    }
-//
-//    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-//        print("Cancel Button")
-//    }
+    func search(with text: String){
+        items = items?.filter("title CONTAINS[cd] %@", text).sorted(byKeyPath: "dateCreated", ascending: true)
+        tableView.reloadData()
+    }
+
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchBar.text?.count == 0{
+            loadData()
+        } else{
+            search(with: searchBar.text!)
+        }
+    }
+
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        print("Cancel Button")
+    }
     
 }
 

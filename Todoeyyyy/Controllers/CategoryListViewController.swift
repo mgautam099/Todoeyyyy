@@ -8,8 +8,9 @@
 
 import UIKit
 import RealmSwift
+import ChameleonFramework
 
-class CategoryListViewController: UITableViewController {
+class CategoryListViewController: SwipeTableViewController {
 
     var categories: Results<Category>?
     var selectedCategory: Category?
@@ -25,7 +26,11 @@ class CategoryListViewController: UITableViewController {
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
-
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.updateNavBar(withHexColor: "7A81FF")
+    }
+    
     // MARK: - Table view data source
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -35,10 +40,13 @@ class CategoryListViewController: UITableViewController {
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "categoryCell", for: indexPath)
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         cell.textLabel?.text = categories?[indexPath.row].title
-        // Configure the cell...
-
+        if let color = UIColor.init(hexString: categories?[indexPath.row].color ?? "7A81FF") {
+            cell.backgroundColor = color
+            cell.textLabel?.textColor = ContrastColorOf(color, returnFlat: true)
+            cell.tintColor = ContrastColorOf(color, returnFlat: true)
+        }
         return cell
     }
     
@@ -56,6 +64,7 @@ class CategoryListViewController: UITableViewController {
             if let text = textField?.text, !text.isEmpty {
                 let category = Category()
                 category.title = text
+                category.color = UIColor.randomFlat.hexValue()
                 self.save(category: category)
             }
             //Todo display error if text empty
@@ -84,6 +93,18 @@ class CategoryListViewController: UITableViewController {
     func loadCategories(){
         categories = realm.objects(Category.self)
         tableView.reloadData()
+    }
+    
+    override func updateModel(at indexPath: IndexPath) {
+        if let categoryToDelete = self.categories?[indexPath.row] {
+            do{
+                try self.realm.write {
+                    self.realm.delete(categoryToDelete)
+                }
+            } catch {
+                print("Error deleting category: \(error)")
+            }
+        }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
